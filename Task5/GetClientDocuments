@@ -1,0 +1,11 @@
+query GetClientDocuments($id: String!) {
+  client(id: $id) {
+    documents {
+      id
+      type
+      number
+      issueDate
+      expiryDate
+    }
+  }
+}
