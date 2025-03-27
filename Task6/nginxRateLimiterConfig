@@ -1,0 +1,30 @@
+http {
+    upstream backend_servers {
+        server backend1.example.com;
+        server backend2.example.com;
+        server backend3.example.com;
+    }
+
+    limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=10r/m;
+
+    server {
+        listen 80;
+
+        location / {
+            limit_req zone=req_limit_per_ip nodelay;
+
+            error_page 429 /custom_429.html;
+            proxy_pass http://backend_servers;
+        }
+    }
+
+    server {
+        listen 80;
+
+        location = /custom_429.html {
+            internal;
+            default_type text/html;
+            return 429 "Too Many Requests";
+        }
+    }
+}
